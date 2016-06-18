@@ -28,6 +28,11 @@
     app-db))
 
 (register-handler
+  :set-page
+  (fn [db [_ value]]
+    (assoc db :current-page value)))
+
+(register-handler
   :set-greeting
   validate-schema-mw
   (fn [db [_ value]]

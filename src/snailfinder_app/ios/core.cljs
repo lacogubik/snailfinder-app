@@ -1,8 +1,10 @@
 (ns snailfinder-app.ios.core
   (:require [reagent.core :as r :refer [atom]]
+            [clojure.string :refer [blank?]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [snailfinder-app.handlers]
             [snailfinder-app.subs]))
+
 
 (set! js/window.React (js/require "react"))
 (def ReactNative (js/require "react-native"))
@@ -10,25 +12,153 @@
 (def app-registry (.-AppRegistry ReactNative))
 (def text (r/adapt-react-class (.-Text ReactNative)))
 (def view (r/adapt-react-class (.-View ReactNative)))
+(def navigator (r/adapt-react-class (.-NavigatorIOS ReactNative)))
 (def image (r/adapt-react-class (.-Image ReactNative)))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
 
 (def logo-img (js/require "./images/cljs.png"))
 
 (defn alert [title]
-      (.alert (.-Alert ReactNative) title))
+  (.alert (.-Alert ReactNative) title))
+
+(defn show-dialog [{text     :text
+                    callback :callback}]
+  (.prompt (.-AlertIOS ReactNative) text nil callback))
+
+(def scroll
+  (r/adapt-react-class (.-ScrollView ReactNative)))
+
+(def touchable
+  (r/adapt-react-class (.-TouchableWithoutFeedback ReactNative)))
+
+
+(def styles
+  {:app       {:position "absolute"
+               :top      0
+               :left     0
+               :bottom   0
+               :right    0}
+   :statusbar {:background-color "#01579B"
+               :height           50}
+   :toolbar   {:position         "relative"
+               :background-color "#01579B"}
+   :scenes    {:main  {:view      {:align-items "stretch"}
+                       :city-card {:card        {:height     105
+                                                 :flex       1
+                                                 }
+                                   :view        {:padding          10
+                                                 :background-color "green"}
+                                   :title       {:font-size 22
+                                                 :color     "white"}
+                                   :temp        {:font-size   22
+                                                 :font-weight "bold"
+                                                 :color       "white"}
+                                   :description {:font-weight   "bold"
+                                                 :margin-bottom 5
+                                                 :color         "white"}
+                                   :key         {:color "white"
+                                                 :text-shadow-color "black"}
+                                   :value       {:font-weight "bold"
+                                                 :color       "white"}}}
+               :about {:view   {:padding 16
+                                :flex    1}
+                       :title  {:font-weight   "bold"
+                                :margin-bottom 4}
+                       :author {:margin-top    4
+                                :margin-bottom 20}}}})
+
+(defn menu-item-component [{:keys [item style]}]
+  (fn []
+    (let []
+      [touchable {:on-press #(dispatch [:set-page [(:id item)]])}
+       [view
+          {:style (get-in styles [:scenes :main :city-card :card])}
+        [view {:style (get-in styles [:scenes :main :city-card :view])}
+        [view
+         [view {:flex-direction  "row"
+                :justify-content "space-between"}
+          [text {:style (get style :title)} (:slug item)]
+          ]
+         [view {:flex-direction "row"}
+          [text {:style (get-in style [:description])}
+           (:title item)]]]]]
+       ;[image {:style  (get-in styles [:scenes :main :city-card :card])
+       ;        :source {:uri media-url}}
+       ; ]
+       ])))
+
+(def menu-items
+  [{:slug "Snail Indetifier"
+    :icon ""
+    :id :home
+    :title "Identify which snail you've just found"}
+   {:slug "Snail List"
+    :icon ""
+    :id :detail-page
+    :title "All of the snails, listed A-Z"}])
+
+
+(defn home-view
+  []
+  (let [style (get-in styles [:scenes :main])]
+    (fn []
+      [view {:style (get style :view)
+             :flex  1}
+
+       [scroll
+        [text {:style {}} "Home"]
+        [menu-item-component {:item  (first menu-items)
+                              :style (get style :city-card)}]
+        [menu-item-component {:item  (second menu-items)
+                              :style (get style :city-card)}]]
+       ;[scroll
+       ; (for [menu-item menu-items]
+       ;   ^{:key (str "container-" menu-item)}
+       ;   [menu-item-component {:item  menu-item
+       ;                         :style (get style :city-card)}])]
+       ])))
+
+
+(defn detail-page
+  []
+  (fn []
+    (let [style (get-in styles [:scenes :main])]
+      [view {:style (get style :view)
+             :flex  1}
+
+       [scroll
+        [text {:style {}} "DETAIL!!!!"]
+        [menu-item-component {:item  (first menu-items)
+                              :style {}}]
+        [menu-item-component {:item  (second menu-items)
+                              :style (get style :city-card)}]]
+       ;[scroll
+       ; (for [menu-item menu-items]
+       ;   ^{:key (str "container-" menu-item)}
+       ;   [menu-item-component {:item  menu-item
+       ;                         :style (get style :city-card)}])]
+       ])))
+
+(defn root-scene [{navigator :navigator}]
+  (let [current-page (subscribe [:get-current-page])]
+    (fn []
+      (let []
+        [view {:flex 1}
+         (case (first @current-page)
+           :home [home-view ]
+           :detail-page [detail-page])]))))
 
 (defn app-root []
-  (let [greeting (subscribe [:get-greeting])]
-    (fn []
-      [view {:style {:flex-direction "column" :margin 40 :align-items "center"}}
-       [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center"}} @greeting]
-       [image {:source logo-img
-               :style  {:width 80 :height 80 :margin-bottom 30}}]
-       [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
-                             :on-press #(alert "HELLO!")}
-        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "press me"]]])))
+  [navigator
+   {:initial-route {:title                 "Snailfinder"
+                    :component             (r/reactify-component root-scene)
+                    }
+    :style         {:position "absolute"
+                    :top      0
+                    :left     0
+                    :bottom   0
+                    :right    0}}])
 
 (defn init []
-      (dispatch-sync [:initialize-db])
-      (.registerComponent app-registry "SnailfinderApp" #(r/reactify-component app-root)))
+  (dispatch-sync [:initialize-db])
+  (.registerComponent app-registry "Snailfinder" #(r/reactify-component app-root)))

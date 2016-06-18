@@ -7,3 +7,10 @@
   (fn [db _]
     (reaction
       (get @db :greeting))))
+
+
+(register-sub
+  :get-current-page
+  (fn [db _]
+    (reaction
+      (get @db :current-page))))
