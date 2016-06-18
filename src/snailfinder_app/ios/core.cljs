@@ -42,7 +42,8 @@
                :height           50}
    :toolbar   {:position         "relative"
                :background-color "#01579B"}
-   :scenes    {:main  {:view      {:align-items "stretch"}
+   :scenes    {:main  {:view      {:align-items "stretch"
+                                   :top 50}
                        :city-card {:card        {:height     105
                                                  :flex       1
                                                  }
@@ -129,7 +130,7 @@
        [scroll
         [text {:style {}} "DETAIL!!!!"]
         [menu-item-component {:item  (first menu-items)
-                              :style {}}]
+                              :style (get style :city-card)}]
         [menu-item-component {:item  (second menu-items)
                               :style (get style :city-card)}]]
        ;[scroll
