@@ -1,3 +1,19 @@
+##########
+##
+##    generate-endpoints.R
+##    Thomas in't Veld, 2016-06-18
+##    script to generate the endpoints ClojureScript construct for SnailFinder app
+##
+##    run like:
+##    Rscript generate-endpoints.R
+##
+##    make sure endpoints.csv is the straight dump from our SnailFinder google doc
+##
+##    
+##
+###########
+
+
 rm(list=ls())
 df <- read.csv('endpoints.csv', stringsAsFactors = FALSE)
 
@@ -49,4 +65,4 @@ printEndpoint <- function(xr){
 endpointsStrings <- sapply(1:nrow(df), function(i) return(printEndpoint(df[i,])))
 
 resultFrame <- c('(def snails {', endpointsStrings, '})')
-write(resultFrame, file='snails-out.txt')
+write(resultFrame, file='../snails-out.txt')
