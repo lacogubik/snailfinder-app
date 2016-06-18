@@ -18,7 +18,7 @@
 (def image (r/adapt-react-class (.-Image ReactNative)))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
 
-(def logo-img (js/require "./images/cljs.png"))
+(def header-img (js/require "./images/header.jpg"))
 
 (defn alert [title]
   (.alert (.-Alert ReactNative) title))
@@ -44,7 +44,8 @@
                :height           50}
    :toolbar   {:position         "relative"
                :background-color "#01579B"}
-   :scenes    {:main  {:view      {:align-items "stretch"}
+   :scenes    {:main  {:view      {:align-items "stretch"
+                                   :top 50}
                        :city-card {:card        {:height     105
                                                  :flex       1
                                                  }
@@ -108,30 +109,34 @@
   []
   (let [style (get-in styles [:scenes :main])]
     (fn []
-      [view {:style (get style :view)
-             :flex  1}
+      [scroll
+       [view
+        {:style {:flex        1}}
+        [image {:source         header-img
+                :style          {:flex 1}
+                :align-items    "center"
+                :justifyContent "center"
+                :resizeMode     "cover"}
+         [text {:style {:font-size        22
+                        :color            "white"
+                        :background-color "rgba(0,0,0,0)"}}
+          "Learn more about snails"]]
 
-       [scroll
-        [text {:style {}} "Home"]
-        [menu-item-component {:item  (first menu-items)
-                              :style (get style :city-card)}]
-        [menu-item-component {:item  (second menu-items)
-                              :style (get style :city-card)}]
-        [menu-item-component {:item  (nth menu-items 2)
-                              :style (get style :city-card)}]]])))
-
-
+        [view (for [menu-item menu-items]
+                ^{:key (str "container-" menu-item)}
+                [menu-item-component {:item  menu-item
+                                      :style (get style :city-card)}])]
+        ]])))
 
 
 (defn root-scene [{navigator :navigator}]
   (let [current-page (subscribe [:get-current-page])]
     (fn []
-      (let []
-        [view {:flex 1}
-         (case (first @current-page)
-           :home [home-view ]
-           :detail-page [detail-page]
-           :list-page [list-page])]))))
+      [view {:flex 1}
+       (case (first @current-page)
+         :home [home-view ]
+         :detail-page [detail-page]
+         :list-page [list-page])])))
 
 (defn app-root []
   [navigator
