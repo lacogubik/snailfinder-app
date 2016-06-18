@@ -4,7 +4,8 @@
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [snailfinder-app.handlers]
             [snailfinder-app.subs]
-            [snailfinder-app.ios.ui :as ui]))
+            [snailfinder-app.ios.ui :as ui]
+            [snailfinder-app.ios.style :refer [colors font-size]]))
 
 
 (def styles
@@ -46,7 +47,8 @@
   [k v]
   [ui/view
    [ui/text {:style {:paddingBottom 5
-                     :fontWeight    "bold"}}
+                     :fontWeight    "bold"
+                     :color         (:primary colors)}}
     (str (name k))]
    [ui/text {:style {:paddingBottom 20}}
     (str v)]])
@@ -54,21 +56,28 @@
 (defn detail-page
   [] ;;snail-id
   (let [snail (subscribe [:get-snail :s1])] (fn []
-    (let [style (get-in styles [:scenes :main])
-          snail @snail]
-      [ui/view {:style (get style :view)
-             :flex  1}
+    (let [snail @snail]
+      [ui/view {:style {:flex              1
+                        :paddingHorizontal 15}}
        [ui/scroll
         [ui/text {:style {}} ""]
         [ui/text {:style {}} ""]
         [ui/text {:style {}} ""]
         [ui/text {:style {}} ""]
         [ui/text {:style {}} ""]
-        [ui/text {:style {}} "detail-page"]
+        [ui/view {:style {:paddingVertical   5}}
+         [ui/text {:style {:fontSize (:h2 font-size)}}
+          (:common-name snail)]]
+        [ui/view {:style {:paddingVertical   5}} [ui/text {:style {:fontSize (:h1 font-size)}}
+                  (:name snail)]]
         (when-let [image-src (:image snail)]
-          [ui/view {:style {}} [ui/image {:source (js/require "./images/cljs.png")}]])
-        (into [ui/view]
-          (mapv (fn [[k v]]
-                  (when-not (blank? v)
-                    [text-row k v])) snail))
+          [ui/view {:style {}}
+           [ui/text {:style {:color (:primary colors)
+                             :fontSize (:small font-size)}} "I found this snail!"]
+           [ui/image {:source (js/require "./images/cljs.png")}]])
+        [ui/view {:style {:paddingVertical 15}}
+         (into [ui/view]
+           (mapv (fn [[k v]]
+                   (when-not (blank? v)
+                     [text-row k v])) snail))]
         ]]))))
