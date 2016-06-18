@@ -96,10 +96,10 @@
    ; :icon ""
    ; :id :home
    ; :title "Identify which snail you've just found"}
-   {:slug "Snail Details"
-    :icon ""
-    :id :detail-page
-    :title "Just one"}
+   ;{:slug "Snail Details"
+   ; :icon ""
+   ; :id :detail-page
+   ; :title "Just one"}
    {:slug "Snail List"
     :icon ""
     :id :list-page
