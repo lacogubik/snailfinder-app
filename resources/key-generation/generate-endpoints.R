@@ -9,7 +9,7 @@
 ##
 ##    make sure endpoints.csv is the straight dump from our SnailFinder google doc
 ##
-##    
+##
 ##
 ###########
 
@@ -38,26 +38,28 @@ df$node.ID <- paste(':', df$node.ID, sep='')
 #       :notes                     ""}
 
 printEndpoint <- function(xr){
+
+
   if(is.na(xr$notes)){xr$notes<-''}
   if(is.na(xr$image.1..animals.on.white.)){xr$image<-''}
   if(is.na(xr$map.image)){xr$map.image<-''}
   string <- paste(
     xr$node.ID, ' { ',
-    ':name "', xr$name, '" ',
-    ':common-name "', xr$common.name, '" ',
-    ':family "', xr$family, '" ',
-    ':size "', xr$size, '" ',
-    ':image-white "', xr$image.1..animals.on.white., '" ',
-    ':image-shell "', xr$image.2..shells., '" ',
-    ':image-habitat "', xr$image.3..animals.in.habitat., '" ',
-    ':identification-characters "', xr$identification.characters, '" ',
-    ':similar-species "', xr$similar.species, '" ',
-    ':ecology "', xr$ecology, '" ',
-    ':gb-distribution "', xr$distribution.in.the.British.Isles, '" ',
-    ':world-distribution "', xr$distribution.elsewhere, '" ',
-    ':conservation-status "', xr$conservation.status, '" ',
-    ':map-image "', xr$map.image, '" ',
-    ':notes "', xr$notes, '"}', sep=''
+    ':name "', gsub('"','',xr$name), '" ',
+    ':common-name "', gsub('"','',xr$common.name), '" ',
+    ':family "', gsub('"','',xr$family), '" ',
+    ':size "', gsub('"','',xr$size), '" ',
+    ':image-white "', gsub('"','',xr$image.1..animals.on.white.), '" ',
+    ':image-shell "', gsub('"','',xr$image.2..shells.), '" ',
+    ':image-habitat "', gsub('"','',xr$image.3..animals.in.habitat.), '" ',
+    ':identification-characters "', gsub('"','',xr$identification.characters), '" ',
+    ':similar-species "', gsub('"','',xr$similar.species), '" ',
+    ':ecology "', gsub('"','',xr$ecology), '" ',
+    ':gb-distribution "', gsub('"','',xr$distribution.in.the.British.Isles), '" ',
+    ':world-distribution "', gsub('"','',xr$distribution.elsewhere), '" ',
+    ':conservation-status "', gsub('"','',xr$conservation.status), '" ',
+    ':map-image "', gsub('"','',xr$map.image), '" ',
+    ':notes "', gsub('"','',xr$notes), '"}', sep=''
   )
   return(string)
 }
