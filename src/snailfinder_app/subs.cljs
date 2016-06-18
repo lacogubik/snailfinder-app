@@ -20,3 +20,9 @@
   (fn [db [_ snail-id]]
     (reaction
       (get-in @db [:snails snail-id]))))
+
+(register-sub
+  :get-snails
+  (fn [db _]
+    (reaction
+      (get @db :snails))))

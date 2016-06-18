@@ -4,7 +4,8 @@
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [snailfinder-app.handlers]
             [snailfinder-app.subs]
-            [snailfinder-app.ios.detail-page :refer [detail-page]]))
+            [snailfinder-app.ios.pages.snail-details :refer [detail-page]]
+            [snailfinder-app.ios.pages.snail-list :refer [list-page]]))
 
 
 (set! js/window.React (js/require "react"))
@@ -93,9 +94,13 @@
     :icon ""
     :id :home
     :title "Identify which snail you've just found"}
-   {:slug "Snail List"
+   {:slug "Snail Details"
     :icon ""
     :id :detail-page
+    :title "Just one"}
+   {:slug "Snail List"
+    :icon ""
+    :id :list-page
     :title "All of the snails, listed A-Z"}])
 
 
@@ -111,6 +116,8 @@
         [menu-item-component {:item  (first menu-items)
                               :style (get style :city-card)}]
         [menu-item-component {:item  (second menu-items)
+                              :style (get style :city-card)}]
+        [menu-item-component {:item  (nth menu-items 2)
                               :style (get style :city-card)}]]])))
 
 
@@ -123,7 +130,8 @@
         [view {:flex 1}
          (case (first @current-page)
            :home [home-view ]
-           :detail-page [detail-page])]))))
+           :detail-page [detail-page]
+           :list-page [list-page])]))))
 
 (defn app-root []
   [navigator

@@ -1,4 +1,4 @@
-(ns snailfinder-app.ios.detail-page
+(ns snailfinder-app.ios.pages.snail-details
   (:require [reagent.core :as r :refer [atom]]
             [clojure.string :refer [blank?]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
