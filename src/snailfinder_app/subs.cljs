@@ -14,3 +14,9 @@
   (fn [db _]
     (reaction
       (get @db :current-page))))
+
+(register-sub
+  :get-snail
+  (fn [db [_ snail-id]]
+    (reaction
+      (get-in @db [:snails snail-id]))))

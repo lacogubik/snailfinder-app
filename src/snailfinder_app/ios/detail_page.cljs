@@ -42,10 +42,20 @@
                        :author {:margin-top    4
                                 :margin-bottom 20}}}})
 
+(defn text-row
+  [k v]
+  [ui/view
+   [ui/text {:style {:paddingBottom 5
+                     :fontWeight    "bold"}}
+    (str (name k))]
+   [ui/text {:style {:paddingBottom 20}}
+    (str v)]])
+
 (defn detail-page
-  []
-  (fn []
-    (let [style (get-in styles [:scenes :main])]
+  [] ;;snail-id
+  (let [snail (subscribe [:get-snail :s1])] (fn []
+    (let [style (get-in styles [:scenes :main])
+          snail @snail]
       [ui/view {:style (get style :view)
              :flex  1}
        [ui/scroll
@@ -55,5 +65,10 @@
         [ui/text {:style {}} ""]
         [ui/text {:style {}} ""]
         [ui/text {:style {}} "detail-page"]
-
-        ]])))
+        (when-let [image-src (:image snail)]
+          [ui/view {:style {}} [ui/image {:source (js/require "./images/cljs.png")}]])
+        (into [ui/view]
+          (mapv (fn [[k v]]
+                  (when-not (blank? v)
+                    [text-row k v])) snail))
+        ]]))))
