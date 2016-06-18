@@ -5,6 +5,6 @@
 
 (def font-size {:small 12
                 :h1 25
-                :h2 20
+                :h2 20})
 
-                })
+(def link {:color (:primary colors)})
