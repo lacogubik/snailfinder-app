@@ -67,7 +67,10 @@
           [ui/text {:style {}} ""]
           [ui/text {:style {}} ""]
           [ui/text {:style {}} ""]
-          [ui/text {:style {}} "snail-id " (str snail-id)]
+          [ui/text {:style {}} ""]
+          [ui/touchable {:on-press #(dispatch [:set-page [:list-page]])}
+           [ui/view
+            [ui/text {:style link} (str "< Snail list")]]]
           [ui/view {:style {:paddingVertical 10}}
            [ui/text {:style link} (str "< " (:family snail) " family")]]
           [ui/view {:style {:paddingVertical 5}}

@@ -30,5 +30,9 @@
         [ui/text {} ""]
         [ui/text {} ""]
         [ui/text {} ""]
+        [ui/touchable {:on-press #(dispatch [:set-page [:home]])}
+         [ui/view
+          [ui/text {:style link} (str "< Home")]]]
+        [ui/text {} ""]
         (into [ui/view]
           (mapv snail-row @snails*))]])))
