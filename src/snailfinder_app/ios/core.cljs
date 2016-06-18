@@ -3,7 +3,8 @@
             [clojure.string :refer [blank?]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [snailfinder-app.handlers]
-            [snailfinder-app.subs]))
+            [snailfinder-app.subs]
+            [snailfinder-app.ios.detail-page :refer [detail-page]]))
 
 
 (set! js/window.React (js/require "react"))
@@ -110,34 +111,10 @@
         [menu-item-component {:item  (first menu-items)
                               :style (get style :city-card)}]
         [menu-item-component {:item  (second menu-items)
-                              :style (get style :city-card)}]]
-       ;[scroll
-       ; (for [menu-item menu-items]
-       ;   ^{:key (str "container-" menu-item)}
-       ;   [menu-item-component {:item  menu-item
-       ;                         :style (get style :city-card)}])]
-       ])))
+                              :style (get style :city-card)}]]])))
 
 
-(defn detail-page
-  []
-  (fn []
-    (let [style (get-in styles [:scenes :main])]
-      [view {:style (get style :view)
-             :flex  1}
 
-       [scroll
-        [text {:style {}} "DETAIL!!!!"]
-        [menu-item-component {:item  (first menu-items)
-                              :style {}}]
-        [menu-item-component {:item  (second menu-items)
-                              :style (get style :city-card)}]]
-       ;[scroll
-       ; (for [menu-item menu-items]
-       ;   ^{:key (str "container-" menu-item)}
-       ;   [menu-item-component {:item  menu-item
-       ;                         :style (get style :city-card)}])]
-       ])))
 
 (defn root-scene [{navigator :navigator}]
   (let [current-page (subscribe [:get-current-page])]
