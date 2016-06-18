@@ -54,33 +54,35 @@
     (str v)]])
 
 (defn detail-page
-  [] ;;snail-id
-  (let [snail (subscribe [:get-snail :s1])] (fn []
-    (let [snail @snail
-          snail-rows (dissoc snail :image :family :common-name :name)]
-      [ui/view {:style {:flex              1
-                        :paddingHorizontal 15}}
-       [ui/scroll
-        [ui/text {:style {}} ""]
-        [ui/text {:style {}} ""]
-        [ui/text {:style {}} ""]
-        [ui/text {:style {}} ""]
-        [ui/text {:style {}} ""]
-        [ui/view {:style {:paddingVertical 10}}
-         [ui/text {:style link} (str "< " (:family snail) " family")]]
-        [ui/view {:style {:paddingVertical   5}}
-         [ui/text {:style {:fontSize (:h2 font-size)}}
-          (:common-name snail)]]
-        [ui/view {:style {:paddingVertical   5
-                          :paddingBottom 30}} [ui/text {:style {:fontSize (:h1 font-size)}}
-                  (:name snail)]]
-        (when-let [image-src (:image snail)]
-          [ui/view {:style {}}
-           [ui/text {:style {:color (:primary colors)
-                             :fontSize (:small font-size)}} "I found this snail!"]
-           [ui/image {:source (js/require "./images/cljs.png")}]])
-        [ui/view {:style {:paddingVertical 15}}
-         (into [ui/view]
-           (mapv (fn [[k v]]
-                   (when-not (blank? v)
-                     [text-row k v])) snail-rows))]]]))))
+  [snail-id] ;;snail-id
+  (let [snail (subscribe [:get-snail snail-id])]
+    (print "[snail-id] snail key: " snail-id)
+    (fn []
+      (let [snail      @snail
+            snail-rows (dissoc snail :image :family :common-name :name)]
+        [ui/view {:style {:flex              1
+                          :paddingHorizontal 15}}
+         [ui/scroll
+          [ui/text {:style {}} ""]
+          [ui/text {:style {}} ""]
+          [ui/text {:style {}} ""]
+          [ui/text {:style {}} ""]
+          [ui/text {:style {}} "snail-id " (str snail-id)]
+          [ui/view {:style {:paddingVertical 10}}
+           [ui/text {:style link} (str "< " (:family snail) " family")]]
+          [ui/view {:style {:paddingVertical 5}}
+           [ui/text {:style {:fontSize (:h2 font-size)}}
+            (:common-name snail)]]
+          [ui/view {:style {:paddingVertical 5
+                            :paddingBottom   30}} [ui/text {:style {:fontSize (:h1 font-size)}}
+                                                   (:name snail)]]
+          (when-let [image-src (:image snail)]
+            [ui/view {:style {}}
+             [ui/text {:style {:color    (:primary colors)
+                               :fontSize (:small font-size)}} "I found this snail!"]
+             [ui/image {:source (js/require "./images/cljs.png")}]])
+          [ui/view {:style {:paddingVertical 15}}
+           (into [ui/view]
+             (mapv (fn [[k v]]
+                     (when-not (blank? v)
+                       [text-row k v])) snail-rows))]]]))))

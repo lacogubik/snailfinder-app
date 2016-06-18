@@ -91,10 +91,11 @@
        ])))
 
 (def menu-items
-  [{:slug "Snail Indetifier"
-    :icon ""
-    :id :home
-    :title "Identify which snail you've just found"}
+  [
+   ;{:slug "Snail Indetifier"
+   ; :icon ""
+   ; :id :home
+   ; :title "Identify which snail you've just found"}
    {:slug "Snail Details"
     :icon ""
     :id :detail-page
@@ -133,10 +134,10 @@
   (let [current-page (subscribe [:get-current-page])]
     (fn []
       [view {:flex 1}
-       (case (first @current-page)
-         :home [home-view ]
-         :detail-page [detail-page]
-         :list-page [list-page])])))
+       (into [(case (first @current-page)
+         :home home-view
+         :detail-page detail-page
+         :list-page list-page)] (rest @current-page))])))
 
 (defn app-root []
   [navigator

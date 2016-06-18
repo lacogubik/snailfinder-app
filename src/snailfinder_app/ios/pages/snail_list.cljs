@@ -12,9 +12,10 @@
   [ui/touchable
    {:on-press #(dispatch [:set-page [:detail-page k]])}
    [ui/view
-   [ui/text {:style {:color      (:primary colors)
-                     :fontWeight "bold"}} name]
-   [ui/text {} common-name]]])
+    [ui/text {:style {:color      (:primary colors)
+                      :fontWeight "bold"}} name]
+    [ui/image {:source (js/require "./images/cljs.png")}]
+    [ui/text {} common-name]]])
 
 (defn list-page
   []
