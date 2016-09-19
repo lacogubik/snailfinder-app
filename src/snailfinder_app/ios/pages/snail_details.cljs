@@ -3,6 +3,7 @@
             [clojure.string :refer [blank?]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [snailfinder-app.handlers]
+            [snailfinder-app.config :as config]
             [snailfinder-app.subs]
             [snailfinder-app.ios.ui :as ui]
             [snailfinder-app.ios.style :refer [colors font-size link]]))
@@ -79,11 +80,17 @@
           [ui/view {:style {:paddingVertical 5
                             :paddingBottom   30}} [ui/text {:style {:fontSize (:h1 font-size)}}
                                                    (:name snail)]]
-          (when-let [image-src (:image snail)]
-            [ui/view {:style {}}
-             [ui/text {:style {:color    (:primary colors)
-                               :fontSize (:small font-size)}} "I found this snail!"]
-             [ui/image {:source (js/require "./images/cljs.png")}]])
+          (when-let [image-src (:image-white snail)]
+            [ui/view {:style {:height 100}}
+             [ui/image {:resizeMode :contain
+                        :style {:position :absolute
+                                :top 0
+                                :bottom 0
+                                :left 0
+                                :right 0}
+                        :source {:uri (str config/images-base-url "snails/" image-src)}}]])
+          [ui/text {:style {:color    (:primary colors)
+                            :fontSize (:small font-size)}} "I found this snail!"]
           [ui/view {:style {:paddingVertical 15}}
            (into [ui/view]
              (mapv (fn [[k v]]
