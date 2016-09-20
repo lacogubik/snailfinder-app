@@ -1,6 +1,7 @@
 (ns snailfinder-app.ios.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
+            [snailfinder-app.shared.data :as data]
             [snailfinder-app.shared.handlers]
             [snailfinder-app.shared.subs]))
 
@@ -9,6 +10,7 @@
 (def app-registry (.-AppRegistry react-native))
 (def text (r/adapt-react-class (.-Text react-native)))
 (def view (r/adapt-react-class (.-View react-native)))
+(def scroll-view (r/adapt-react-class (.-ScrollView react-native)))
 (def image (r/adapt-react-class (.-Image react-native)))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight react-native)))
 (def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental react-native))))
@@ -55,7 +57,7 @@
         next-title (str "Route " (inc idx))
         next-key   (keyword (str idx))]
     [view {:style (:view style)}
-     [text {:style (:title style)} (str "Hello #" idx)]
+     #_[text {:style (:title style)} (str "Hello #" idx)]
      [image {:source logo-img
              :style  (:image style)}]
      #_[touchable-highlight
@@ -78,21 +80,34 @@
                                         :title "Snail details"}])}
       [text {:style (:button-text style)} "Snail details"]]]))
 
-(defn scene-snail-list [props]
+
+(defn- snail-list-item
+  [[snail-key snail]]
+  [text {:style (:title style)} (:name snail)])
+
+
+(defn scene-snail-list
+  [props]
   [view {:style (:view style)}
-   [text {:style (:title style)} "Snail List"]
+   [text {:style (:title style)} "Snail list"]
    [touchable-highlight
     {:style    (:button style)
      :on-press #(dispatch [:nav/home nil])}
-    [text {:style (:button-text style)} "Go home"]]])
+    [text {:style (:button-text style)} "Go home"]]
+   (into [scroll-view {:align-items "stretch"}]
+     (mapv (fn [snail]
+             [snail-list-item snail]) data/snails))])
 
-(defn scene-snail-details [props]
+
+(defn scene-snail-details
+  [props]
   [view {:style (:view style)}
    [text {:style (:title style)} "Snail details"]
    [touchable-highlight
     {:style    (:button style)
      :on-press #(dispatch [:nav/home nil])}
     [text {:style (:button-text style)} "Go home"]]])
+
 
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
