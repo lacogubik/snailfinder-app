@@ -1,11 +1,6 @@
 (ns snailfinder-app.subs
   (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [re-frame.core :refer [reg-sub reg-sub-raw]]))
-
-(reg-sub
-  :get-greeting
-  (fn [db _]
-    (:greeting db)))
+  (:require [re-frame.core :refer [reg-sub-raw subscribe]]))
 
 (reg-sub-raw
   :nav/index

@@ -1,28 +1,24 @@
 (ns snailfinder-app.ios.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
-            [snailfinder-app.events]
             [snailfinder-app.handlers]
             [snailfinder-app.subs]))
 
-(def ReactNative (js/require "react-native"))
+(def react-native (js/require "react-native"))
 
-(def app-registry (.-AppRegistry ReactNative))
-(def text (r/adapt-react-class (.-Text ReactNative)))
-(def view (r/adapt-react-class (.-View ReactNative)))
-(def image (r/adapt-react-class (.-Image ReactNative)))
-(def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
-(def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental ReactNative))))
-(def navigation-header-comp (.-Header (.-NavigationExperimental ReactNative)))
+(def app-registry (.-AppRegistry react-native))
+(def text (r/adapt-react-class (.-Text react-native)))
+(def view (r/adapt-react-class (.-View react-native)))
+(def image (r/adapt-react-class (.-Image react-native)))
+(def touchable-highlight (r/adapt-react-class (.-TouchableHighlight react-native)))
+(def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental react-native))))
+(def navigation-header-comp (.-Header (.-NavigationExperimental react-native)))
 (def navigation-header (r/adapt-react-class navigation-header-comp))
-(def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental ReactNative)))))
+(def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental react-native)))))
 
 (.log js/console card-stack)
 
 (def logo-img (js/require "./images/cljs.png"))
-
-(defn alert [title]
-      (.alert (.-Alert ReactNative) title))
 
 (def style
   {:view        {:flex-direction "column"
@@ -75,16 +71,15 @@
        :on-press #(dispatch [:nav/home nil])}
       [text {:style (:button-text style)} "Go home"]]]))
 
-
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
     (fn []
       [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
-                   :render-overlay   #(r/as-element (header %))
+                   :render-header   #(r/as-element (header %))
                    :navigation-state @nav
                    :style            {:flex 1}
                    :render-scene     #(r/as-element (scene %))}])))
 
 (defn init []
   (dispatch-sync [:initialize-db])
-  (.registerComponent app-registry "SnailfinderApp" #(r/reactify-component app-root)))
+  (.registerComponent app-registry "NavigatorCljs" #(r/reactify-component app-root)))
