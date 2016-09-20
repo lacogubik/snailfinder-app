@@ -78,6 +78,22 @@
                                         :title "Snail details"}])}
       [text {:style (:button-text style)} "Snail details"]]]))
 
+(defn scene-snail-list [props]
+  [view {:style (:view style)}
+   [text {:style (:title style)} "Snail List"]
+   [touchable-highlight
+    {:style    (:button style)
+     :on-press #(dispatch [:nav/home nil])}
+    [text {:style (:button-text style)} "Go home"]]])
+
+(defn scene-snail-details [props]
+  [view {:style (:view style)}
+   [text {:style (:title style)} "Snail details"]
+   [touchable-highlight
+    {:style    (:button style)
+     :on-press #(dispatch [:nav/home nil])}
+    [text {:style (:button-text style)} "Go home"]]])
+
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
     (fn []
