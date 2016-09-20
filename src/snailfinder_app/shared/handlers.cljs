@@ -1,8 +1,8 @@
-(ns snailfinder-app.handlers
+(ns snailfinder-app.shared.handlers
   (:require
     [re-frame.core :refer [reg-event-db after]]
     [cljs.spec :as s]
-    [snailfinder-app.db :as db :refer [app-db]]))
+    [snailfinder-app.shared.db :as db :refer [app-db]]))
 
 ;; -- Helpers --------------------------------------------------------------
 

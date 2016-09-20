@@ -1,4 +1,4 @@
-(ns snailfinder-app.db
+(ns snailfinder-app.shared.db
   (:require [cljs.spec :as s]))
 
 (s/def ::index integer?)
@@ -19,4 +19,4 @@
 (def app-db {:nav {:index    0
                    :key      :home
                    :routes [{:key :first-route
-                             :title "First route"}]}})
+                             :title "SnailApp"}]}})

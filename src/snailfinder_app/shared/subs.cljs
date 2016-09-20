@@ -1,4 +1,4 @@
-(ns snailfinder-app.subs
+(ns snailfinder-app.shared.subs
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [re-frame.core :refer [reg-sub-raw subscribe]]))
 

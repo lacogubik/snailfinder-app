@@ -1,8 +1,8 @@
 (ns snailfinder-app.ios.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
-            [snailfinder-app.handlers]
-            [snailfinder-app.subs]))
+            [snailfinder-app.shared.handlers]
+            [snailfinder-app.shared.subs]))
 
 (def react-native (js/require "react-native"))
 
@@ -15,8 +15,6 @@
 (def navigation-header-comp (.-Header (.-NavigationExperimental react-native)))
 (def navigation-header (r/adapt-react-class navigation-header-comp))
 (def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental react-native)))))
-
-(.log js/console card-stack)
 
 (def logo-img (js/require "./images/cljs.png"))
 
@@ -41,7 +39,7 @@
                  :border-radius    5}})
 
 (defn nav-title [props]
-  (.log js/console "props" props)
+  ;(.log js/console "props" props)
   [header-title (aget props "scene" "route" "title")])
 
 (defn header
@@ -53,32 +51,46 @@
      :on-navigate-back #(dispatch [:nav/pop nil]))])
 
 (defn scene [props]
-  (.log js/console props)
-  (let [idx (aget props "scene" "index")
+  (let [idx        (aget props "scene" "index")
         next-title (str "Route " (inc idx))
-        next-key (keyword (str idx))]
+        next-key   (keyword (str idx))]
     [view {:style (:view style)}
      [text {:style (:title style)} (str "Hello #" idx)]
      [image {:source logo-img
              :style  (:image style)}]
-     [touchable-highlight
+     #_[touchable-highlight
       {:style    (:button style)
        :on-press #(dispatch [:nav/push {:key   next-key
                                         :title next-title}])}
       [text {:style (:button-text style)} "Next route"]]
-     [touchable-highlight
+     #_[touchable-highlight
       {:style    (:button style)
        :on-press #(dispatch [:nav/home nil])}
-      [text {:style (:button-text style)} "Go home"]]]))
+      [text {:style (:button-text style)} "Go home"]]
+     [touchable-highlight
+      {:style    (:button style)
+       :on-press #(dispatch [:nav/push {:key   :routes/snail-list
+                                        :title "Snail list"}])}
+      [text {:style (:button-text style)} "Snail list"]]
+     [touchable-highlight
+      {:style    (:button style)
+       :on-press #(dispatch [:nav/push {:key   :routes/snail-details
+                                        :title "Snail details"}])}
+      [text {:style (:button-text style)} "Snail details"]]]))
 
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
     (fn []
       [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
-                   :render-header   #(r/as-element (header %))
+                   :render-header    #(r/as-element (header %))
                    :navigation-state @nav
                    :style            {:flex 1}
-                   :render-scene     #(r/as-element (scene %))}])))
+                   :render-scene     #(r/as-element
+                                       (do
+                                         (case (keyword (aget % "scene" "route" "key"))
+                                           :snail-list (scene-snail-list %)
+                                           :snail-details (scene-snail-details %)
+                                           (scene %))))}])))
 
 (defn init []
   (dispatch-sync [:initialize-db])
