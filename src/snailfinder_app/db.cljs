@@ -1,10 +1,7 @@
-(ns snailfinder-app.db
-  (:require [clojure.spec :as s]))
-
-;; spec of app-db
-(s/def ::greeting string?)
-(s/def ::app-db
-  (s/keys :req-un [::greeting]))
+(ns snailfinder-app.db)
 
 ;; initial state of app-db
-(def app-db {:greeting "Hello Clojure in iOS and Android!"})
+(def app-db {:nav {:index    0
+                   :key      :home
+                   :routes [{:key :first-route
+                             :title "First route"}]}})

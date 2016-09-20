@@ -2,6 +2,7 @@
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [snailfinder-app.events]
+            [snailfinder-app.handlers]
             [snailfinder-app.subs]))
 
 (def ReactNative (js/require "react-native"))
@@ -11,23 +12,79 @@
 (def view (r/adapt-react-class (.-View ReactNative)))
 (def image (r/adapt-react-class (.-Image ReactNative)))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
+(def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental ReactNative))))
+(def navigation-header-comp (.-Header (.-NavigationExperimental ReactNative)))
+(def navigation-header (r/adapt-react-class navigation-header-comp))
+(def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental ReactNative)))))
+
+(.log js/console card-stack)
 
 (def logo-img (js/require "./images/cljs.png"))
 
 (defn alert [title]
       (.alert (.-Alert ReactNative) title))
 
+(def style
+  {:view        {:flex-direction "column"
+                 :margin         40
+                 :margin-top     (.-HEIGHT navigation-header-comp)
+                 :align-items    "center"}
+   :title       {:font-size     30
+                 :font-weight   "100"
+                 :margin-bottom 20
+                 :text-align    "center"}
+   :button-text {:color       "white"
+                 :text-align  "center"
+                 :font-weight "bold"}
+   :image       {:width         80
+                 :height        80
+                 :margin-bottom 30}
+   :button      {:background-color "#999"
+                 :padding          10
+                 :margin-bottom    10
+                 :border-radius    5}})
+
+(defn nav-title [props]
+  (.log js/console "props" props)
+  [header-title (aget props "scene" "route" "title")])
+
+(defn header
+  [props]
+  [navigation-header
+   (assoc
+     (js->clj props)
+     :render-title-component #(r/as-element (nav-title %))
+     :on-navigate-back #(dispatch [:nav/pop nil]))])
+
+(defn scene [props]
+  (.log js/console props)
+  (let [idx (aget props "scene" "index")
+        next-title (str "Route " (inc idx))
+        next-key (keyword (str idx))]
+    [view {:style (:view style)}
+     [text {:style (:title style)} (str "Hello #" idx)]
+     [image {:source logo-img
+             :style  (:image style)}]
+     [touchable-highlight
+      {:style    (:button style)
+       :on-press #(dispatch [:nav/push {:key   next-key
+                                        :title next-title}])}
+      [text {:style (:button-text style)} "Next route"]]
+     [touchable-highlight
+      {:style    (:button style)
+       :on-press #(dispatch [:nav/home nil])}
+      [text {:style (:button-text style)} "Go home"]]]))
+
+
 (defn app-root []
-  (let [greeting (subscribe [:get-greeting])]
+  (let [nav (subscribe [:nav/state])]
     (fn []
-      [view {:style {:flex-direction "column" :margin 40 :align-items "center"}}
-       [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center"}} @greeting]
-       [image {:source logo-img
-               :style  {:width 80 :height 80 :margin-bottom 30}}]
-       [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
-                             :on-press #(alert "HELLO!")}
-        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "press me"]]])))
+      [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
+                   :render-overlay   #(r/as-element (header %))
+                   :navigation-state @nav
+                   :style            {:flex 1}
+                   :render-scene     #(r/as-element (scene %))}])))
 
 (defn init []
-      (dispatch-sync [:initialize-db])
-      (.registerComponent app-registry "SnailfinderApp" #(r/reactify-component app-root)))
+  (dispatch-sync [:initialize-db])
+  (.registerComponent app-registry "SnailfinderApp" #(r/reactify-component app-root)))
