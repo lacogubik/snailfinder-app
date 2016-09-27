@@ -1,6 +1,6 @@
 {
   "name": "SnailfinderApp",
-  "interface": "reagent",
+  "interface": "reagent6",
   "androidHost": "localhost",
   "iosHost": "localhost",
   "envRoots": {

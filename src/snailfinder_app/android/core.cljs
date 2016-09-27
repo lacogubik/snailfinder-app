@@ -1,10 +1,9 @@
 (ns snailfinder-app.android.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
-            [snailfinder-app.handlers]
-            [snailfinder-app.subs]))
+            [snailfinder-app.shared.handlers]
+            [snailfinder-app.shared.subs]))
 
-(set! js/window.React (js/require "react"))
 (def ReactNative (js/require "react-native"))
 
 (def app-registry (.-AppRegistry ReactNative))
