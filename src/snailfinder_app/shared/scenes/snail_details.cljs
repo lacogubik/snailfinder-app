@@ -1,7 +1,6 @@
 (ns snailfinder-app.shared.scenes.snail-details
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
-            [snailfinder-app.shared.assets :as a]
             [snailfinder-app.shared.data :as data]
             [snailfinder-app.shared.ui :as ui]
             [snailfinder-app.ios.style :refer [style]]))
