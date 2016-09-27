@@ -18,7 +18,7 @@
 (def navigation-header (r/adapt-react-class navigation-header-comp))
 (def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental react-native)))))
 
-(def logo-img (js/require "./images/cljs.png"))
+(def logo-img (js/require "./images/logo-circle.png"))
 
 (def style
   {:view        {:flex-direction "column"
@@ -32,8 +32,8 @@
    :button-text {:color       "white"
                  :text-align  "center"
                  :font-weight "bold"}
-   :image       {:width         80
-                 :height        80
+   :image       {:width         106
+                 :height        100
                  :margin-bottom 30}
    :button      {:background-color "#999"
                  :padding          10

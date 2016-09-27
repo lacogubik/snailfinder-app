@@ -19,4 +19,4 @@
 (def app-db {:nav {:index    0
                    :key      :home
                    :routes [{:key :first-route
-                             :title "SnailApp"}]}})
+                             :title "Snail Finder"}]}})
