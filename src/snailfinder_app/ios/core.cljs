@@ -54,6 +54,7 @@
 
 (defn scene [props]
   (let [idx        (aget props "scene" "index")
+        idx        (aget props "scene" "index")
         next-title (str "Route " (inc idx))
         next-key   (keyword (str idx))]
     [view {:style (:view style)}
@@ -61,39 +62,33 @@
      [image {:source logo-img
              :style  (:image style)}]
      #_[touchable-highlight
-      {:style    (:button style)
-       :on-press #(dispatch [:nav/push {:key   next-key
-                                        :title next-title}])}
-      [text {:style (:button-text style)} "Next route"]]
+        {:style    (:button style)
+         :on-press #(dispatch [:nav/push {:key   next-key
+                                          :title next-title}])}
+        [text {:style (:button-text style)} "Next route"]]
      #_[touchable-highlight
-      {:style    (:button style)
-       :on-press #(dispatch [:nav/home nil])}
-      [text {:style (:button-text style)} "Go home"]]
+        {:style    (:button style)
+         :on-press #(dispatch [:nav/home nil])}
+        [text {:style (:button-text style)} "Go home"]]
      [touchable-highlight
       {:style    (:button style)
        :on-press #(dispatch [:nav/push {:key   :routes/snail-list
-                                        :title "Snail list"}])}
-      [text {:style (:button-text style)} "Snail list"]]
-     [touchable-highlight
-      {:style    (:button style)
-       :on-press #(dispatch [:nav/push {:key   :routes/snail-details
-                                        :title "Snail details"}])}
-      [text {:style (:button-text style)} "Snail details"]]]))
+                                        :title "Snail List"}])}
+      [text {:style (:button-text style)} "Snails"]]]))
 
 
 (defn- snail-list-item
   [[snail-key snail]]
-  [text {:style (:title style)} (:name snail)])
+  [text {:style    {}
+         :on-press #(dispatch [:nav/push {:key       :routes/snail-details
+                                          :title     "Snail Details"
+                                          :snail-key snail-key}])}
+   (:name snail)])
 
 
 (defn scene-snail-list
   [props]
-  [view {:style (:view style)}
-   [text {:style (:title style)} "Snail list"]
-   [touchable-highlight
-    {:style    (:button style)
-     :on-press #(dispatch [:nav/home nil])}
-    [text {:style (:button-text style)} "Go home"]]
+  [view {:style {:flex 1}}
    (into [scroll-view {:align-items "stretch"}]
      (mapv (fn [snail]
              [snail-list-item snail]) data/snails))])
@@ -101,12 +96,18 @@
 
 (defn scene-snail-details
   [props]
-  [view {:style (:view style)}
-   [text {:style (:title style)} "Snail details"]
-   [touchable-highlight
-    {:style    (:button style)
-     :on-press #(dispatch [:nav/home nil])}
-    [text {:style (:button-text style)} "Go home"]]])
+  (let [idx       (aget props "scene" "index")
+        snail-key (keyword (aget props "scene" "route" "snail-key"))
+        snail-data (js->clj (get data/snails snail-key) :keywordize-keys true)]
+    [view {:style {:flex 1}}
+     [scroll-view {:align-items "stretch"}
+      [text {:style (:title style)} (:name snail-data)]
+     (into [view] (map
+                    (fn [[k v]]
+                      [view {}
+                       [text {:style {:font-weight :bold}} k]
+                       [text v]])
+                    (get data/snails snail-key)))]]))
 
 
 (defn app-root []
